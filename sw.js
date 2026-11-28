@@ -1,4 +1,4 @@
-const CACHE_NAME = 'still-shell-v2'
+const CACHE_NAME = 'still-shell-v3'
 const SHELL = ['./', './manifest.webmanifest', './icons/still.svg', './icons/still-192.png', './icons/still-512.png']
 const SHELL_URL = new URL('./', self.registration.scope).href
 

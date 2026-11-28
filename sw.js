@@ -1,6 +1,7 @@
-const CACHE_NAME = 'still-shell-v3'
+const CACHE_NAME = 'still-shell-v4'
 const SHELL = ['./', './manifest.webmanifest', './icons/still.svg', './icons/still-192.png', './icons/still-512.png']
 const SHELL_URL = new URL('./', self.registration.scope).href
+const VERSION_PATH = new URL('app-version.json', self.registration.scope).pathname
 
 self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
@@ -32,9 +33,11 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET') return
   const url = new URL(request.url)
   if (url.origin !== self.location.origin) return
+  if (url.pathname === VERSION_PATH) return
 
   if (request.mode === 'navigate') {
-    event.respondWith(fetch(request).then((response) => {
+    event.respondWith(fetch(request, { cache: 'no-cache' }).then((response) => {
+      if (!response.ok) return caches.match(SHELL_URL).then((cached) => cached || response)
       const copy = response.clone()
       caches.open(CACHE_NAME).then((cache) => cache.put(SHELL_URL, copy))
       return response
